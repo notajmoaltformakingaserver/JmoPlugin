@@ -1,0 +1,10 @@
+name: JmoPlugin
+version: 1.0
+main: me.jmo.jmoplugin.JmoPlugin
+api-version: 1.13
+
+commands:
+  hi:
+    description: Say hi
+  jmotest:
+    description: Test command
