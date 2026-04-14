@@ -14,10 +14,16 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
 public class ItemEditorGUI implements Listener {
+    private final JavaPlugin plugin;
+
+    public ItemEditorGUI(JavaPlugin plugin) {
+        this.plugin = plugin;
+    }
 
     private final Map<UUID, String> awaitingInput = new HashMap<>();
     private final Map<UUID, ItemStack> editingItem = new HashMap<>();
@@ -50,10 +56,11 @@ public class ItemEditorGUI implements Listener {
     }
 
     private void openLoreMenu(Player p) {
+        if (!can(p, "jmo.itemeditor.lore", "edit item lore")) return;
         ItemStack item = editingItem.get(p.getUniqueId());
         if (item == null) return;
         Inventory gui = Bukkit.createInventory(null, 27, LORE_TITLE);
-        gui.setItem(10, btn(Material.QUILL, ChatColor.GREEN + "Add Line", ChatColor.GRAY + "Type a new line in chat"));
+        gui.setItem(10, btn(Material.FEATHER, ChatColor.GREEN + "Add Line", ChatColor.GRAY + "Type a new line in chat"));
         gui.setItem(12, btn(Material.FLINT, ChatColor.YELLOW + "Remove Last Line", ChatColor.GRAY + "Removes the bottom lore line"));
         gui.setItem(14, btn(Material.BARRIER, ChatColor.RED + "Clear Lore", ChatColor.GRAY + "Wipes all lore lines"));
         gui.setItem(16, btn(Material.ARROW, ChatColor.GRAY + "Back", ChatColor.GRAY + "Return to main menu"));
@@ -63,6 +70,7 @@ public class ItemEditorGUI implements Listener {
     }
 
     private void openEnchantMenu(Player p) {
+        if (!can(p, "jmo.itemeditor.enchant", "edit enchantments")) return;
         ItemStack item = editingItem.get(p.getUniqueId());
         if (item == null) return;
         Inventory gui = Bukkit.createInventory(null, 27, ENCHANT_TITLE);
@@ -77,6 +85,7 @@ public class ItemEditorGUI implements Listener {
     }
 
     private void openFlagsMenu(Player p) {
+        if (!can(p, "jmo.itemeditor.flags", "edit item flags")) return;
         ItemStack item = editingItem.get(p.getUniqueId());
         if (item == null) return;
         ItemMeta meta = item.getItemMeta();
@@ -120,16 +129,35 @@ public class ItemEditorGUI implements Listener {
         if (title.equals(MAIN_TITLE)) {
             switch (label) {
                 case "Rename":
+                    if (!can(p, "jmo.itemeditor.rename", "rename items")) break;
                     p.closeInventory();
                     awaitingInput.put(p.getUniqueId(), "rename");
                     p.sendMessage(ChatColor.AQUA + "Type the new name in chat. Use & for colours.");
                     break;
-                case "Edit Lore": openLoreMenu(p); break;
-                case "Enchantments": openEnchantMenu(p); break;
-                case "Toggle Glow": toggleGlow(p, item); openMainMenu(p); break;
-                case "Unbreakable": toggleUnbreakable(p, item); openMainMenu(p); break;
-                case "Item Flags": openFlagsMenu(p); break;
+                case "Edit Lore":
+                    if (!can(p, "jmo.itemeditor.lore", "edit item lore")) break;
+                    openLoreMenu(p);
+                    break;
+                case "Enchantments":
+                    if (!can(p, "jmo.itemeditor.enchant", "edit enchantments")) break;
+                    openEnchantMenu(p);
+                    break;
+                case "Toggle Glow":
+                    if (!can(p, "jmo.itemeditor.glow", "toggle glow")) break;
+                    toggleGlow(p, item);
+                    openMainMenu(p);
+                    break;
+                case "Unbreakable":
+                    if (!can(p, "jmo.itemeditor.unbreakable", "toggle unbreakable")) break;
+                    toggleUnbreakable(p, item);
+                    openMainMenu(p);
+                    break;
+                case "Item Flags":
+                    if (!can(p, "jmo.itemeditor.flags", "edit item flags")) break;
+                    openFlagsMenu(p);
+                    break;
                 case "Model Data":
+                    if (!can(p, "jmo.itemeditor.modeldata", "set custom model data")) break;
                     p.closeInventory();
                     awaitingInput.put(p.getUniqueId(), "modeldata");
                     p.sendMessage(ChatColor.AQUA + "Type the custom model data number in chat.");
@@ -138,34 +166,54 @@ public class ItemEditorGUI implements Listener {
         } else if (title.equals(LORE_TITLE)) {
             switch (label) {
                 case "Add Line":
+                    if (!can(p, "jmo.itemeditor.lore", "edit item lore")) break;
                     p.closeInventory();
                     awaitingInput.put(p.getUniqueId(), "loreadd");
                     p.sendMessage(ChatColor.AQUA + "Type the lore line in chat. Use & for colours.");
                     break;
-                case "Remove Last Line": removeLastLore(p, item); openLoreMenu(p); break;
-                case "Clear Lore": clearLore(p, item); openLoreMenu(p); break;
-                case "Back": openMainMenu(p); break;
+                case "Remove Last Line":
+                    if (!can(p, "jmo.itemeditor.lore", "edit item lore")) break;
+                    removeLastLore(p, item);
+                    openLoreMenu(p);
+                    break;
+                case "Clear Lore":
+                    if (!can(p, "jmo.itemeditor.lore", "edit item lore")) break;
+                    clearLore(p, item);
+                    openLoreMenu(p);
+                    break;
+                case "Back":
+                    openMainMenu(p);
+                    break;
             }
         } else if (title.equals(ENCHANT_TITLE)) {
             switch (label) {
                 case "Add Enchantment":
+                    if (!can(p, "jmo.itemeditor.enchant", "edit enchantments")) break;
                     p.closeInventory();
                     awaitingInput.put(p.getUniqueId(), "enchantadd");
                     p.sendMessage(ChatColor.AQUA + "Type: ENCHANT_NAME LEVEL  e.g. DAMAGE_ALL 5");
                     break;
                 case "Remove Enchantment":
+                    if (!can(p, "jmo.itemeditor.enchant", "edit enchantments")) break;
                     p.closeInventory();
                     awaitingInput.put(p.getUniqueId(), "enchantremove");
                     p.sendMessage(ChatColor.AQUA + "Type the enchantment name to remove.");
                     break;
-                case "Back": openMainMenu(p); break;
+                case "Back":
+                    openMainMenu(p);
+                    break;
             }
         } else if (title.equals(FLAGS_TITLE)) {
-            if (label.equals("Back")) { openMainMenu(p); return; }
+            if (label.equals("Back")) {
+                openMainMenu(p);
+                return;
+            }
+            if (!can(p, "jmo.itemeditor.flags", "edit item flags")) return;
             String flagName = "HIDE_" + label.replace(" ", "_").toUpperCase();
             try {
                 ItemFlag flag = ItemFlag.valueOf(flagName);
                 ItemMeta meta = item.getItemMeta();
+                if (meta == null) meta = Bukkit.getItemFactory().getItemMeta(item.getType());
                 if (meta.hasItemFlag(flag)) meta.removeItemFlags(flag);
                 else meta.addItemFlags(flag);
                 item.setItemMeta(meta);
@@ -233,7 +281,7 @@ public class ItemEditorGUI implements Listener {
         }
 
         Bukkit.getScheduler().runTask(
-            Bukkit.getPluginManager().getPlugin("JmoPlugin"),
+            plugin,
             () -> openMainMenu(p)
         );
     }
@@ -250,10 +298,11 @@ public class ItemEditorGUI implements Listener {
         }
     }
 
-    private void toggleGlow(Player p, ItemStack item) {
+    public void toggleGlow(Player p, ItemStack item) {
         ItemMeta meta = item.getItemMeta();
+        if (meta == null) meta = Bukkit.getItemFactory().getItemMeta(item.getType());
         if (!meta.hasEnchants()) {
-            meta.addEnchant(Enchantment.LUCK, 1, true);
+            meta.addEnchant(Enchantment.LUCK_OF_THE_SEA, 1, true);
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             p.sendMessage(ChatColor.GREEN + "Glow added!");
         } else {
@@ -316,6 +365,12 @@ public class ItemEditorGUI implements Listener {
         for (int i = 0; i < size; i++) {
             if (gui.getItem(i) == null) gui.setItem(i, glass);
         }
+    }
+
+    private boolean can(Player p, String permission, String action) {
+        if (p.hasPermission(permission)) return true;
+        p.sendMessage(ChatColor.RED + "You do not have permission to " + action + ".");
+        return false;
     }
 
     private String color(String s) {

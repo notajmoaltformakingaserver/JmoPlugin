@@ -36,15 +36,20 @@ public class JmoPlugin extends JavaPlugin implements Listener {
     private final Map<UUID, Boolean> itemEditorActive = new HashMap<>();
     private final Map<UUID, String> editingFieldMap = new HashMap<>();
 
+    private ItemEditorGUI itemEditor;
+
     @Override
     public void onEnable() {
+        itemEditor = new ItemEditorGUI(this);
+        Bukkit.getPluginManager().registerEvents(itemEditor, this);
         // Register listeners
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getPluginManager().registerEvents(new MobListener(this), this); // FIX: was never registered
         Bukkit.getPluginManager().registerEvents(new DeathMessageListener(), this); // NEW: world-scoped death messages
 
-        // Register itemeditor command executor
-        getCommand("itemeditor").setExecutor(new ItemEditorCommand()); // FIX: was never registered
+        if (getCommand("itemeditor") != null) {
+            getCommand("itemeditor").setExecutor(new ItemEditorCommand(itemEditor));
+        }
 
         getLogger().info("JmoPlugin has been enabled!, hiya console!");
     }
@@ -65,23 +70,30 @@ public class JmoPlugin extends JavaPlugin implements Listener {
 
         switch (cmd.getName().toLowerCase()) {
             case "hi":
+                if (!checkCommandPermission(p, "jmo.hi", "You do not have permission to use /hi.")) return true;
                 p.sendMessage("hi " + p.getName() + "!");
                 return true;
             case "jmotest":
+                if (!checkCommandPermission(p, "jmo.jmotest", "You do not have permission to use /jmotest.")) return true;
                 p.sendMessage(ChatColor.GREEN + "The Plugin Is Working Correctly");
                 return true;
             case "holycow":
+                if (!checkCommandPermission(p, "jmo.holycow", "You do not have permission to use /holycow.")) return true;
                 spawnHolyCow(p);
                 return true;
             case "evilchicken":
+                if (!checkCommandPermission(p, "jmo.evilchicken", "You do not have permission to use /evilchicken.")) return true;
                 spawnEvilChicken(p);
                 return true;
             case "customsword":
+                if (!checkCommandPermission(p, "jmo.customsword", "You do not have permission to use /customsword.")) return true;
                 return handleCustomSword(p, args);
             case "herobrine":
+                if (!checkCommandPermission(p, "jmo.herobrine", "You do not have permission to use /herobrine.")) return true;
                 applyHerobrine(p);
                 return true;
             case "unherobrine":
+                if (!checkCommandPermission(p, "jmo.unherobrine", "You do not have permission to use /unherobrine.")) return true;
                 removeHerobrine(p);
                 return true;
             default:
@@ -121,10 +133,16 @@ public class JmoPlugin extends JavaPlugin implements Listener {
         }
     }
 
+    private boolean checkCommandPermission(CommandSender sender, String permission, String message) {
+        if (sender.hasPermission(permission)) return true;
+        sender.sendMessage(ChatColor.RED + message);
+        return false;
+    }
+
     private ItemStack createCustomSword(String id) {
         ItemStack sword = new ItemStack(Material.DIAMOND_SWORD);
         ItemMeta meta = sword.getItemMeta();
-        meta.addEnchant(Enchantment.DAMAGE_ALL, 5, true);
+        meta.addEnchant(Enchantment.SHARPNESS, 5, true);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
         switch (id.toLowerCase()) {
@@ -228,7 +246,7 @@ public class JmoPlugin extends JavaPlugin implements Listener {
                 v.setFireTicks(120);
                 break;
             case "§b§lFrostfang":
-                v.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 120, 2));
+                v.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 120, 2));
                 break;
             case "§e§lThunder Edge":
                 v.getWorld().strikeLightningEffect(v.getLocation());
@@ -256,7 +274,7 @@ public class JmoPlugin extends JavaPlugin implements Listener {
                 break;
             case "§0§lDoom Blade":
                 v.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 60, 0));
-                v.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 60, 0));
+                v.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60, 0));
                 v.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 60, 0));
                 break;
             case "§6§lKingslayer":
@@ -306,7 +324,7 @@ public class JmoPlugin extends JavaPlugin implements Listener {
             return;
         }
 
-        meta.addEnchant(Enchantment.DURABILITY, 1, true);
+        meta.addEnchant(Enchantment.UNBREAKING, 1, true);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         beef.setItemMeta(meta);
         e.getDrops().clear();
