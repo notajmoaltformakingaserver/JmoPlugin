@@ -141,6 +141,12 @@ The **Item Editor** is an advanced in-game tool to customize items held in your 
 This project uses **Maven** for builds.
 > this was deff not made by copilot (trust)
 
+
+
+
+
+- i figured out that if i just dont enter teh box i cant get stuck in it >:3
+
 ```bash
 # Clone the repository
 git clone https://github.com/notajmoaltformakingaserver/JmoPlugin.git
@@ -151,6 +157,3 @@ mvn clean package
 
 # JAR will be in target/ directory
 
-
-# yo how do i undo this? im stuck typing in this box vro ```
-that didnt work uhhh ''' ?? nope AYOOOOOOOO HELPPPPPPPPPPP
