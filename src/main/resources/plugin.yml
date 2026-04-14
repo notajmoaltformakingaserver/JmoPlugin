@@ -1,10 +1,93 @@
 name: JmoPlugin
-version: 1.0
 main: me.jmo.jmoplugin.JmoPlugin
-api-version: 1.13
+version: 2.2
+api-version: 1.21.11
 
 commands:
   hi:
-    description: Say hi
+    description: HAIIII!!!
+    permission: jmo.hi
+    permission-message: You do not have permission to use /hi.
   jmotest:
-    description: Test command
+    description: Test if the plugin is working.
+    permission: jmo.jmotest
+    permission-message: You do not have permission to use /jmotest.
+  holycow:
+    description: Summon a holy (or unholy) cow.
+    permission: jmo.holycow
+    permission-message: You do not have permission to use /holycow.
+  evilchicken:
+    description: Summon an evil chicken.
+    permission: jmo.evilchicken
+    permission-message: You do not have permission to use /evilchicken.
+  customsword:
+    description: List or give custom swords.
+    usage: /customsword list | /customsword give <player> <sword>
+    permission: jmo.customsword
+    permission-message: You do not have permission to use /customsword.
+  herobrine:
+    description: Become Herobrine.
+    permission: jmo.herobrine
+    permission-message: You do not have permission to use /herobrine.
+  unherobrine:
+    description: Revert Herobrine transformation.
+    permission: jmo.unherobrine
+    permission-message: You do not have permission to use /unherobrine.
+  itemeditor:
+    description: Open the item editor GUI or edit the held item.
+    usage: /itemeditor <open|name|loreadd|loreclear|enchant|delenchant|unbreakable|model|flag|unflag|glow>
+    permission: jmo.itemeditor
+    permission-message: You do not have permission to use /itemeditor.
+
+permissions:
+  jmo.hi:
+    description: Allows using /hi
+    default: true
+  jmo.jmotest:
+    description: Allows using /jmotest
+    default: true
+  jmo.holycow:
+    description: Allows summoning a holy cow
+    default: op
+  jmo.evilchicken:
+    description: Allows summoning an evil chicken
+    default: op
+  jmo.customsword:
+    description: Allows using /customsword
+    default: op
+  jmo.customsword.list:
+    description: Allows listing available custom swords
+    default: op
+  jmo.customsword.give:
+    description: Allows giving custom swords to other players
+    default: op
+  jmo.herobrine:
+    description: Allows using /herobrine
+    default: op
+  jmo.unherobrine:
+    description: Allows using /unherobrine
+    default: op
+  jmo.itemeditor:
+    description: Allows opening the item editor GUI and using item editor commands
+    default: op
+  jmo.itemeditor.rename:
+    description: Allows renaming held items
+    default: op
+  jmo.itemeditor.lore:
+    description: Allows editing item lore
+    default: op
+  jmo.itemeditor.enchant:
+    description: Allows adding and removing enchantments
+    default: op
+  jmo.itemeditor.unbreakable:
+    description: Allows toggling unbreakable
+    default: op
+  jmo.itemeditor.modeldata:
+    description: Allows setting custom model data
+    default: op
+  jmo.itemeditor.flags:
+    description: Allows toggling item flags
+    default: op
+  jmo.itemeditor.glow:
+    description: Allows toggling the item glow effect
+    default: op
