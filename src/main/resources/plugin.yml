@@ -1,10 +1,24 @@
 name: JmoPlugin
-version: 1.0
 main: me.jmo.jmoplugin.JmoPlugin
-api-version: 1.13
+version: 2.2
+api-version: 1.21.11
 
 commands:
   hi:
-    description: Say hi
+    description: HAIIII!!!
   jmotest:
-    description: Test command
+    description: Test if the plugin is working.
+  holycow:
+    description: Summon a holy (or unholy) cow.
+  evilchicken:
+    description: Summon an evil chicken.
+  customsword:
+    description: List or give custom swords.
+    usage: /customsword list | /customsword give <player> <sword>
+  herobrine:
+    description: Become Herobrine.
+  unherobrine:
+    description: Revert Herobrine transformation.
+  itemeditor:
+    description: Edit the item in your hand.
+    usage: /itemeditor <name|loreadd|loreclear|enchant|delenchant|unbreakable|model|flag|unflag|glow>
